@@ -29,9 +29,9 @@ class view
     protected function parse($content)
     {
         // single variables
-        $content = preg_replace('/{{\s+?(.*)\s+?}}/', '<?php echo htmlentities(\1) ?>', $content);
+        $content = preg_replace('/{{\s+?((?:(?!}}).)+)\s+?}}/', '<?php echo htmlentities(\1) ?>', $content);
         // print raw content
-        $content = preg_replace('/{{{\s+?(.*)\s+?}}}/', '<?php echo \1 ?>', $content);
+        $content = preg_replace('/{!!\s+?((?:(?!\!\!}).)+)\s+?!!}/', '<?php echo \1 ?>', $content);
 
         // @TODO include sub view
         /*

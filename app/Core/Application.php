@@ -46,7 +46,8 @@ final class Application
         $container->register([
             'db' => $this->db,
             'request' => $this->request,
-            'router' => Router::class
+            'router' => Router::class,
+            'config' => Config::getInstance(),
         ]);
 
         self::$instance = $this;

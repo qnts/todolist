@@ -1,7 +1,17 @@
-@if (!isset($test))
-    $test is not defined
-@endif
-
-@foreach ($todos as $todo)
-    <p>{{ $todo->name }}</p>
-@endforeach
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ config('name') }}</title>
+    </head>
+    <body>
+        <h1>{{ config('name') }}</h1>
+        <ul>
+            @foreach ($todos as $todo)
+            <li>
+                <a href="{{ url('/todo/{:id}', ['id' => $todo->id]) }}">{{ $todo->name }}</a>
+            </li>
+            @endforeach
+        </ul>
+    </body>
+</html>

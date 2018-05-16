@@ -55,3 +55,8 @@ function view($path, $data = [])
 {
     return new View($path, $data);
 }
+
+function config($key)
+{
+    return resolve('config')->get($key);
+}
