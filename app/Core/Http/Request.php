@@ -13,7 +13,7 @@ class Request
 
     public function __construct()
     {
-        parse_str($_SERVER['QUERY_STRING'], $query);
+        parse_str(isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '', $query);
         $this->query = new DotNotation($query);
         $this->files = $_FILES;
         $this->data = new DotNotation($_POST);

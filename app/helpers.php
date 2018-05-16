@@ -36,7 +36,7 @@ function url($url = '/', $params = [])
         $protocol = isset($_SERVER['HTTPS']) ? 'https' : 'http';
         $host = $_SERVER['HTTP_HOST'];
         $paths = explode(basename($_SERVER['SCRIPT_NAME']), dirname($_SERVER['PHP_SELF']));
-        $path = trim($paths[0], '/');
+        $path = trim($paths[0], '/\\');
         // inject params into $url
         foreach ($params as $name => $value) {
             $url = str_replace("{:$name}", $value, $url);
@@ -45,9 +45,9 @@ function url($url = '/', $params = [])
         $url = preg_replace(Router::REGVAL, '', $url);
         // build the final url
         if (config('short_url')) {
-            $fullUrl = '/' . trim(sprintf('/%1$s%2$s', $path, $url), '/');
+            $fullUrl = '/' . trim(sprintf('/%1$s%2$s', $path, $url), '/\\');
         } else {
-            $fullUrl = sprintf('%1$s://%2$s%3$s%4$s', $protocol, $host, $path, rtrim($url, '/'));
+            $fullUrl = sprintf('%1$s://%2$s%3$s%4$s', $protocol, $host, $path, rtrim($url, '/\\'));
         }
         return $fullUrl;
     } else {
