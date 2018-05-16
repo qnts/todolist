@@ -8,7 +8,9 @@
             "email": "qnts028@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "php": ">=5.6.4"
+    },
     "autoload": {
         "psr-4": {
             "App\\": "app/"
