@@ -38,6 +38,9 @@ class view
         $content = preg_replace('/\@include\s+?\((.*)\)/', '<?php include(\1) ?>', $content);
         */
 
+        // php
+        $content = preg_replace('/\@php/', '<?php', $content);
+        $content = preg_replace('/\@endphp/', '?>', $content);
         // loop
         $content = preg_replace('/\@foreach\s+?\((.*)\)/', '<?php foreach (\1): ?>', $content);
         $content = preg_replace('/\@endforeach/', '<?php endforeach; ?>', $content);

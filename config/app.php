@@ -9,5 +9,6 @@ return [
         'user' => 'root',
         'password' => '',
         'db' => 'todolist',
-    ]
+    ],
+    'short_url' => true
 ];

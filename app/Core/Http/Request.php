@@ -38,8 +38,11 @@ class Request
         return is_null($value) ? $default : $value;
     }
 
-    public function input($key, $default = '')
+    public function input($key = '', $default = '')
     {
+        if (empty($key)) {
+            return $this->data->toArray();
+        }
         $value = $this->data->get($key);
         return is_null($value) ? $default : $value;
     }

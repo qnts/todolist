@@ -20,9 +20,10 @@ class Response
     public function __construct($body = '', $headers = [], $status = 200)
     {
         $this->body = $body;
-        $this->headers = $headers;
         // set a default header
         $this->setHeader('Content-Type', 'text/html; charset=utf-8');
+        $this->headers = array_merge($this->headers, $headers);
+        $this->setStatus($status);
     }
 
     public function setHeader($name, $value = null)
@@ -79,5 +80,19 @@ class Response
     public function redirect($url)
     {
         $this->setHeader('Location', $url);
+    }
+
+    /**
+     * Set the value of Response status code
+     *
+     * @param mixed status
+     *
+     * @return self
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        http_response_code($status);
+        return $this;
     }
 }

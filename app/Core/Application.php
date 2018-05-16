@@ -27,6 +27,8 @@ final class Application
      */
     public function __construct($path = '')
     {
+        // init session
+        \session_start();
         // register base path for application
         $this->basePath = $path;
 
@@ -48,6 +50,7 @@ final class Application
             'request' => $this->request,
             'router' => Router::class,
             'config' => Config::getInstance(),
+            'session' => Session::class,
         ]);
 
         self::$instance = $this;
@@ -95,8 +98,7 @@ final class Application
         // Routing and dispatching
         $routeResult = $router->parse();
         if (!$routeResult) {
-            $response = new Http\Response('<h1>404 Not Found</h1>', [], 404);
-            $response->output();
+            response_404()->output();
         } else {
             // call direct action
             if (isset($routeResult['handler'])) {
@@ -112,6 +114,10 @@ final class Application
                 $response->render()->output();
             } elseif (is_string($response)) {
                 (new Http\Response($response))->output();
+            } elseif (is_array($response)) {
+                json_response($response)->output();
+            } else {
+                // do nothing
             }
         }
 

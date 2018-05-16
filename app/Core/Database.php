@@ -62,6 +62,18 @@ class Database
     }
 
     /**
+     * Binds a value to a parameter.
+     * @param   string  $param
+     * @param   mixed   $value
+     */
+    public function bindValues($params)
+    {
+        foreach ($params as $name => $value) {
+            $this->bindValue($name, $value);
+        }
+    }
+
+    /**
      * Executes a prepared statement
      * @access public
      * @param   array   Array of values to be bound in SQL query, All values are treated as PDO::PARAM_STR.

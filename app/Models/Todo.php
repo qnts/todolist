@@ -8,6 +8,8 @@ class Todo extends Model
 {
     protected $table = 'todos';
 
+    protected $fillable = ['name', 'start_date', 'end_date', 'status'];
+
     public static function all()
     {
         $db = resolve('db');
@@ -17,7 +19,9 @@ class Todo extends Model
         $modelList = [];
         // transform to array of models
         foreach ($result as $data) {
-            $modelList[] = new Todo($data);
+            $model = new Todo();
+            $model->_fill($data);
+            $modelList[] = $model;
         }
 
         return $modelList;
