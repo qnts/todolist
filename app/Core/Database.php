@@ -12,10 +12,13 @@ class Database
     protected $connection;
 
     /**
-     * @var PDOStatement PDOStatement Object
+     * @var \PDOStatement PDOStatement Object
      */
     private $statement = null;
 
+    /**
+     * Database constructor.
+     */
     public function __construct()
     {
         $dbConfigs = Config::get('database');
@@ -36,6 +39,10 @@ class Database
         }
     }
 
+    /**
+     * Close pdo connection
+     * @return void
+     */
     public function close()
     {
         $this->connection = null;
@@ -62,11 +69,10 @@ class Database
     }
 
     /**
-     * Binds a value to a parameter.
-     * @param   string  $param
-     * @param   mixed   $value
+     * Binds an array of values to parameters.
+     * @param   array  $params
      */
-    public function bindValues($params)
+    public function bindValues(array $params)
     {
         foreach ($params as $name => $value) {
             $this->bindValue($name, $value);
@@ -76,7 +82,7 @@ class Database
     /**
      * Executes a prepared statement
      * @access public
-     * @param   array   Array of values to be bound in SQL query, All values are treated as PDO::PARAM_STR.
+     * @param   array $arr  Array of values to be bound in SQL query, All values are treated as PDO::PARAM_STR.
      * @return  boolean Returns TRUE on success or FALSE on failure.
      */
     public function execute($arr = null)

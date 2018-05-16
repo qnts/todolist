@@ -3,11 +3,15 @@
 namespace App\Controllers;
 
 use App\Core\Http\Controller;
+use App\Core\Http\Response;
 use App\Core\View;
 use App\Models\Todo;
 
 class TodoController extends Controller
 {
+    /**
+     * Display homepage
+     */
     public function index()
     {
         $todoList = Todo::all();
@@ -19,12 +23,22 @@ class TodoController extends Controller
         return view('home', compact('todos'));
     }
 
+    /**
+     * Delete a todo
+     * @param null|int $id
+     * @return string
+     */
     public function delete($id = null)
     {
         Todo::delete($id);
         return '1';
     }
 
+    /**
+     * Display edit form
+     * @param null|int $id
+     * @return \App\Core\Http\Response|View
+     */
     public function edit($id = null)
     {
         $todo = Todo::find($id);
@@ -41,7 +55,9 @@ class TodoController extends Controller
     }
 
     /**
-     *
+     * Update a todo
+     * @param null|int $id
+     * @return \App\Core\Http\Response
      */
     public function save($id = null)
     {
@@ -65,6 +81,9 @@ class TodoController extends Controller
         return redirect('/todo/{:id}/edit?saved=1', ['id' => $todo->id]);
     }
 
+    /**
+     * Create a todo
+     */
     public function store()
     {
         // @TODO validate
@@ -79,6 +98,11 @@ class TodoController extends Controller
         return redirect('/todo/{:id}/edit?saved=1', ['id' => $todo->id]);
     }
 
+    /**
+     * Validate request
+     * @param null|int $id Pass the id to redirect to edit page when errors occur, else go to create page
+     * @return true|Response
+     */
     protected function validate($id = null)
     {
         $name = trim(request()->input('name'));

@@ -4,6 +4,9 @@ namespace App\Core\Utilities;
 
 class DotNotation
 {
+    /**
+     * @var array the underlying data
+     */
     protected $data;
 
     public function __construct($data = [])
@@ -11,16 +14,27 @@ class DotNotation
         $this->data = $data;
     }
 
+    /**
+     * @param $data
+     * @return static
+     */
     public static function create(&$data)
     {
         return new static($data);
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->data;
     }
 
+    /**
+     * @param $index
+     * @return mixed|null
+     */
     public function get($index)
     {
         $index = explode('.', $index);

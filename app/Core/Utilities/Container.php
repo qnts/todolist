@@ -4,10 +4,20 @@ namespace App\Core\Utilities;
 
 class Container
 {
+    /**
+     * @var array List of registered singleton object
+     */
     protected $instances = [];
 
+    /**
+     * @var Container
+     */
     protected static $instance;
 
+    /**
+     * Get instance of this container
+     * @return Container
+     */
     public static function getInstance()
     {
         if (!self::$instance) {
@@ -16,6 +26,11 @@ class Container
         return self::$instance;
     }
 
+    /**
+     * Register singleton object
+     * @param array|string $name
+     * @param mixed $instance
+     */
     public function register($name, $instance = null)
     {
         if (is_array($name)) {
@@ -30,6 +45,11 @@ class Container
         }
     }
 
+    /**
+     * Retrieve the registered object
+     * @param $name
+     * @return mixed
+     */
     public function resolve($name)
     {
         return $this->instances[$name];

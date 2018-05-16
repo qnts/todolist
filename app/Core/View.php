@@ -4,12 +4,33 @@ namespace App\Core;
 
 class view
 {
+    /**
+     * Template file name
+     */
     protected $file;
+    /**
+     * Data to be passed into view
+     */
     protected $data;
+    /**
+     * Generated cached template file
+     */
     protected $cacheFile;
+    /**
+     * The base path to view directory
+     */
     protected $basePath;
+    /**
+     * Path to cache directory
+     */
     protected $cachePath;
 
+    /**
+     * Constructor
+     * @param $file string
+     * @param $data array data to be passed into view
+     * @return void
+     */
     public function __construct($file, $data = [])
     {
         $this->basePath = app()->getBasePath() . '/app/views/';
@@ -26,6 +47,11 @@ class view
         }
     }
 
+    /**
+     * Parse the template tags inside a string and write parsed file into cache
+     * @param $content string
+     * @return void
+     */
     protected function parse($content)
     {
         // single variables
@@ -57,6 +83,10 @@ class view
         $this->cacheFile = $path;
     }
 
+    /**
+     * Renders a parsed template and turns it into response object
+     * @return Response
+     */
     public function render()
     {
         extract($this->data);

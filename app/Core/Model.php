@@ -29,7 +29,8 @@ class Model
 
     /**
      * Look for a property and return it if found
-     * @param $property string
+     * @param string $property
+     * @return mixed|void
      */
     public function __get($property)
     {
@@ -39,17 +40,32 @@ class Model
         return;
     }
 
+    /**
+     * Set a property using magic method
+     * @param $property
+     * @param $value
+     */
     public function __set($property, $value)
     {
         $this->properties[$property] = $value;
     }
 
+    /**
+     * Return model properties as json string
+     * @param array $maps
+     * @return string
+     */
     public function toJson($maps = [])
     {
         $newProperties = $this->map($maps);
         return json_encode($newProperties);
     }
 
+    /**
+     * Map properties to another names
+     * @param array $maps
+     * @return array
+     */
     public function map($maps = [])
     {
         $newProperties = [];
@@ -63,11 +79,17 @@ class Model
         return $newProperties;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->properties;
     }
 
+    /**
+     * Save model to db
+     */
     public function save()
     {
         $properties = $this->properties;
@@ -101,7 +123,11 @@ class Model
         }
     }
 
-    public function fill($values)
+    /**
+     * Enrich the model properties
+     * @param array $values
+     */
+    public function fill(array $values)
     {
         if (!empty($this->fillable)) {
             foreach ($this->fillable as $key) {
@@ -112,11 +138,18 @@ class Model
         }
     }
 
-    protected function _fill($values)
+    /**
+     * Fill the model properties. Ignore $fillable
+     * @param array $values
+     */
+    protected function _fill(array $values)
     {
         $this->properties = array_merge($this->properties, $values);
     }
 
+    /**
+     * Delete this model record
+     */
     public function remove()
     {
         if ($this->id) {
@@ -124,6 +157,11 @@ class Model
         }
     }
 
+    /**
+     * Find a record by id
+     * @param $id
+     * @return Model|void
+     */
     public static function find($id)
     {
         $db = resolve('db');
@@ -141,6 +179,10 @@ class Model
         return;
     }
 
+    /**
+     * Delete a record using model id
+     * @param $id
+     */
     public static function delete($id)
     {
         $db = resolve('db');

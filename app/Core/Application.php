@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-final class Application
+class Application
 {
     /**
      * Application base path
@@ -56,6 +56,10 @@ final class Application
         self::$instance = $this;
     }
 
+    /**
+     * Get the singleton Application object
+     * @return Application
+     */
     public static function getInstance()
     {
         return self::$instance;
@@ -80,16 +84,28 @@ final class Application
         return $this->db;
     }
 
+    /**
+     * Get the singleton request object
+     * @return Http\Request
+     */
     public function request()
     {
         return $this->request;
     }
 
+    /**
+     * Get base path for this app
+     * @return string
+     */
     public function getBasePath()
     {
         return $this->basePath;
     }
 
+    /**
+     * Run the application
+     * @return void
+     */
     public function run()
     {
         // register routes

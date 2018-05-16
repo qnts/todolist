@@ -5,17 +5,28 @@ namespace App\Core;
 class Config
 {
     /**
-     * Configs array
+     * Configs dot notation object
      */
     protected $dotNotation;
-
+    /**
+     * @var the singleton config instance
+     */
     protected static $instance;
 
-    public function __construct($configs)
+    /**
+     * Config constructor.
+     * @param array $configs
+     */
+    public function __construct(array $configs)
     {
         $this->dotNotation = new Utilities\DotNotation($configs);
     }
 
+    /**
+     * Retrieve singleton object
+     * @param null|array $configs
+     * @return Config
+     */
     public static function getInstance($configs = null)
     {
         if (is_null(self::$instance)) {

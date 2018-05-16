@@ -17,6 +17,12 @@ class Response
      */
     protected $status = 200;
 
+    /**
+     * Construct a new response
+     * @param string $body the request body
+     * @param array $headers additional headers for the response
+     * @param int $status the http status code for the response
+     */
     public function __construct($body = '', $headers = [], $status = 200)
     {
         $this->body = $body;
@@ -26,6 +32,12 @@ class Response
         $this->setStatus($status);
     }
 
+    /**
+     * Set a header
+     * @param string $name
+     * @param string $value
+     * @return void
+     */
     public function setHeader($name, $value = null)
     {
         $this->headers[$name] = $value;
@@ -63,6 +75,7 @@ class Response
 
     /**
      * Output response
+     * @return void
      */
     public function output()
     {
@@ -77,6 +90,11 @@ class Response
         echo $this->body;
     }
 
+    /**
+     * Set the response for redirection
+     * @param string $url
+     * @return void
+     */
     public function redirect($url)
     {
         $this->setHeader('Location', $url);
@@ -85,7 +103,7 @@ class Response
     /**
      * Set the value of Response status code
      *
-     * @param mixed status
+     * @param int $status
      *
      * @return self
      */
