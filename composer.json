@@ -1,0 +1,17 @@
+{
+    "name": "vnetd/todolist",
+    "description": "A simple MVC todolist using pure php",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Nguyen Quyet",
+            "email": "qnts028@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
