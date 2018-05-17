@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use App\Core\Http\Response;
 use \PDO;
 
 class Database
@@ -35,7 +36,8 @@ class Database
                 $dbConfigs['password']
             );
         } catch (\Exception $ex) {
-            die('Could not establish a connection!');
+            (new Response('Could not establish a database connection', [], 500))->output();
+            die;
         }
     }
 

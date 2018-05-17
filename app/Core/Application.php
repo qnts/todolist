@@ -23,7 +23,7 @@ class Application
 
     /**
      * Create an instance of application
-     * @return void
+     * @param string $path path to root dir
      */
     public function __construct($path = '')
     {
@@ -41,7 +41,7 @@ class Application
         $this->request = new Http\Request();
 
         // connect db
-        $this->db = new Database(Config::get('database'));
+        $this->db = new Database();
 
         // register singleton objects
         $container = Utilities\Container::getInstance();
@@ -112,6 +112,7 @@ class Application
         require_once($this->basePath . '/config/routes.php');
 
         // Routing and dispatching
+        /** @var Router $router */
         $routeResult = $router->parse();
         if (!$routeResult) {
             response_404()->output();
@@ -136,8 +137,15 @@ class Application
                 // do nothing
             }
         }
+    }
 
+    /**
+     * Terminate the process
+     */
+    public function terminate()
+    {
         // end cycle
         $this->db->close();
+        die;
     }
 }
