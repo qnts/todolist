@@ -3,7 +3,7 @@
 use App\Core\Application;
 use App\Core\Router;
 use App\Core\Http\Response;
-use App\Core\View;
+use App\Core\Http\ViewResponse;
 use App\Core\Utilities\Container;
 
 /**
@@ -37,59 +37,60 @@ function request()
 /**
  * Return a response for redirection
  * @param string $url
- * @param array $params
  * @return Response
  */
-function redirect($url = '/', $params = [])
+function redirect($url = '/')
 {
-    $fullUrl = url($url, $params);
+    $fullUrl = url($url);
     $response = new Response();
     $response->redirect($fullUrl);
     return $response;
 }
 
 /**
- * Construct url
+ * Return a response for redirection, using route name and passing args instead
+ * @param string $routeName
+ * @param array $args
+ * @return Response
+ */
+function to_route($routeName, $args = [])
+{
+    $url = route($routeName, $args);
+    return redirect($url);
+}
+
+/**
+ * Shortcut for Router::url
  * @param string $url
- * @param array $params
+ * @param null|array $args
  * @return string
  */
-function url($url = '/', $params = [])
+function url($url = '/', $args = null)
 {
-    // is an application url
-    if (substr($url, 0, 1) === '/') {
-        $protocol = isset($_SERVER['HTTPS']) ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'];
-        $paths = explode(basename($_SERVER['SCRIPT_NAME']), dirname($_SERVER['PHP_SELF']));
-        $path = trim($paths[0], '/\\');
-        // inject params into $url
-        foreach ($params as $name => $value) {
-            $url = str_replace("{:$name}", $value, $url);
-        }
-        // clean unassigned param to avoid exploit
-        $url = preg_replace(Router::REGVAL, '', $url);
-        // build the final url
-        if (config('short_url')) {
-            $fullUrl = '/' . trim(sprintf('/%1$s%2$s', $path, $url), '/\\');
-        } else {
-            $fullUrl = sprintf('%1$s://%2$s%3$s%4$s', $protocol, $host, $path, rtrim($url, '/\\'));
-        }
-        return $fullUrl;
-    } else {
-        // direct to the url
-        return $url;
-    }
+    return resolve('router')->url($url, $args);
+}
+
+/**
+ * Shortcut for Router::route
+ * @param string $url
+ * @param array $args
+ * @return string
+ */
+function route($url = '/', $args = [])
+{
+    return resolve('router')->route($url, $args);
 }
 
 /**
  * Shortcut for instantiate a View
  * @param $path
  * @param array $data
- * @return View
+ * @return ViewResponse
+ * @throws Exception
  */
 function view($path, $data = [])
 {
-    return new View($path, $data);
+    return new ViewResponse($path, $data);
 }
 
 /**
@@ -116,9 +117,9 @@ function config($key)
  * @param object|array $object
  * @return Response
  */
-function json_response($object)
+function json($object)
 {
-    return new Response(json_encode($object), ['Content-type', 'application/json']);
+    return new \App\Core\Http\JsonResponse($object);
 }
 
 /**
@@ -128,4 +129,25 @@ function json_response($object)
 function response_404()
 {
     return new Response('<h1>404 not found</h1>', [], 404);
+}
+
+/**
+ * Debug variables
+ */
+function dump()
+{
+    foreach (func_get_args() as $var) {
+        echo '<pre>';
+        var_dump($var);
+        echo '</pre>';
+    }
+}
+
+/**
+ * Debug variables and exit
+ */
+function dd()
+{
+    call_user_func_array('dump', func_get_args());
+    die;
 }
