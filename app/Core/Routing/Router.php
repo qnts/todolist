@@ -19,16 +19,16 @@ class Router
      * @var array Predefined patterns for routing
      */
     public $patterns = [
-        ':any'  => '.*',
-        ':id'   => '[0-9]+',
-        ':slug' => '[a-z\-]+',
-        ':name' => '[a-zA-Z]+',
+        'any'  => '.*',
+        'id'   => '[0-9]+',
+        'slug' => '[a-zA-Z0-9\-]+',
+        'name' => '[a-zA-Z]+',
     ];
 
     /**
      * Named pattern regex
      */
-    const REGVAL = '#({:.+?})#';
+    const REGVAL = '#({.+?})#';
 
     /**
      * Match an url with any methods
@@ -125,34 +125,4 @@ class Router
         $this->routes[$method][] = [$path => $handler];
     }
 
-    /**
-     * Parse named parameters inside route path
-     * @param string $requestUri
-     * @param string $resource
-     * @return array
-     */
-    protected function parseRegexRoute($requestUri, $resource)
-    {
-        $route = preg_replace_callback(self::REGVAL, function ($matches) {
-            $patterns = $this->patterns;
-            $matches[0] = str_replace(['{', '}'], '', $matches[0]);
-
-            if (in_array($matches[0], array_keys($patterns))) {
-                return $patterns[$matches[0]];
-            }
-        }, $resource);
-
-
-        $regUri = explode('/', $resource);
-
-        $args = array_diff(
-            array_replace(
-                $regUri,
-                explode('/', $requestUri)
-            ),
-            $regUri
-        );
-
-        return [array_values($args), $resource, $route];
-    }
 }
