@@ -34,17 +34,23 @@ class Request
         $this->data = new DotNotation($_POST);
         $this->method = 'GET';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            switch ($this->input('_method')) {
-                case 'PUT':
-                    $this->method = 'PUT';
-                    break;
-                case 'DELETE':
-                    $this->method = 'DELETE';
-                    break;
-                default:
-                    $this->method = 'POST';
+            $method = strtoupper($this->input('_method'));
+            if (in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+                $this->method = $method;
+            } else {
+                $this->method = 'POST';
             }
         }
+    }
+
+    /**
+     * Check the request method
+     * @param string $method method string to test against the request's method
+     * @return bool
+     */
+    public function is($method)
+    {
+        return $this->method === strtoupper($method);
     }
 
     /**
