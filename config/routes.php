@@ -2,7 +2,7 @@
 
 $router = resolve('router');
 
-$router->get('/', 'TodoController@index');
+$router->get('/', 'TodoController@index')->name('home');
 
 // create
 $router->get('/todo/create', function () {
@@ -12,11 +12,11 @@ $router->get('/todo/create', function () {
         $todo->fill(session()->flash('old'));
     }
     return view('edit', compact('todo'));
-});
+})->name('todo.create');
 $router->post('/todo/create', 'TodoController@store');
 // edit
-$router->get('/todo/{:id}/edit', 'TodoController@edit');
+$router->get('/todo/{id}/edit', 'TodoController@edit')->name('todo.edit');
 // save edit
-$router->put('/todo/{:id}', 'TodoController@save');
+$router->put('/todo/{id}', 'TodoController@save')->name('todo.save');
 // delete
-$router->delete('/todo/{:id}', 'TodoController@delete');
+$router->delete('/todo/{id}', 'TodoController@delete')->name('todo.delete');
