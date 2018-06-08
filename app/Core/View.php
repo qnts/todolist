@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-class view
+class View
 {
     /**
      * Template file name
@@ -29,7 +29,7 @@ class view
      * Constructor
      * @param $file string
      * @param $data array data to be passed into view
-     * @return void
+     * @throws \Exception
      */
     public function __construct($file, $data = [])
     {
@@ -84,8 +84,8 @@ class view
     }
 
     /**
-     * Renders a parsed template and turns it into response object
-     * @return Response
+     * Get the parsed html
+     * @return string
      */
     public function render()
     {
@@ -94,6 +94,15 @@ class view
         include $this->cacheFile;
         $html = ob_get_clean();
 
-        return new Http\Response($html);
+        return $html;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
+    }
+
 }
