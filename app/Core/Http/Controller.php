@@ -2,17 +2,19 @@
 
 namespace App\Core\Http;
 
+use App\Core\Routing\Route;
+
 class Controller
 {
     /**
      * Invoke the child controller method
-     * @param array $args an array of args passed from router
+     * @param Route $route
      * @return Response
      */
-    public static function invoke($args)
+    public static function invoke(Route $route)
     {
-        $className = 'App\\Controllers\\' . $args['controller'];
-        $controller = new $className();
-        return call_user_func_array([$controller, $args['method']], $args['args']);
+        $handler = $route->getHandler();
+        $controller = new $handler['controller']();
+        return call_user_func_array([$controller, $handler['method']], $route->getArgs());
     }
 }

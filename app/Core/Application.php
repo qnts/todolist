@@ -2,6 +2,11 @@
 
 namespace App\Core;
 
+
+use App\Core\Http\ViewResponse;
+use App\Core\Routing\Route;
+use App\Core\Routing\Router;
+
 class Application
 {
     /**
@@ -105,6 +110,7 @@ class Application
     /**
      * Run the application
      * @return void
+     * @throws \Exception
      */
     public function run()
     {
@@ -112,29 +118,35 @@ class Application
         require_once($this->basePath . '/config/routes.php');
 
         // Routing and dispatching
-        /** @var Router $router */
-        $routeResult = $router->parse();
-        if (!$routeResult) {
+        /**
+         * @var Router $router
+         * @var Route $route
+         */
+        $route = $router->parse();
+        if (!$route) {
             response_404()->output();
         } else {
-            // call direct action
-            if (isset($routeResult['handler'])) {
-                $response = call_user_func_array($routeResult['handler'], $routeResult['args']);
+            // call direct function
+            if (is_callable($route->getHandler())) {
+                $response = call_user_func_array($route->getHandler(), $route->getArgs());
             } else {
                 // call controller action
-                $response = Http\Controller::invoke($routeResult);
+                $response = Http\Controller::invoke($route);
             }
             // output response
             if ($response instanceof Http\Response) {
                 $response->output();
             } elseif ($response instanceof View) {
-                $response->render()->output();
+                (new ViewResponse($response))->output();
             } elseif (is_string($response)) {
                 (new Http\Response($response))->output();
             } elseif (is_array($response)) {
-                json_response($response)->output();
+                json($response)->output();
             } else {
-                // do nothing
+                // 501 Not Implemented
+                http_response_code(501);
+                // or throw error
+                // never mind :)
             }
         }
     }
