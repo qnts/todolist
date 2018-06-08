@@ -61,7 +61,8 @@ class Route
 
             $this->handler = [
                 'controller' => $controller,
-                'method' => $method ?: 'index'
+                'method' => $method ?: 'index',
+                'full' => $controller . '::' . $method,
             ];
         } else {
             $this->handler = $handler;
@@ -121,7 +122,7 @@ class Route
                 $uriSegment = $uriPath[$i];
                 // if routeSegment is {id:...}
                 if (preg_match(self::REGEX, $routeSegment)) {
-                    $argName = explode(':', $routeSegment, 2)[0];
+                    $argName = explode(':', str_replace(['{', '}'], '', $routeSegment), 2)[0];
                     // add id => uriSegment into args list
                     $this->args[$argName] = $uriSegment;
                 }

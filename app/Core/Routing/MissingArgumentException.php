@@ -11,6 +11,6 @@ class MissingArgumentException extends RouteException
      */
     public function __construct($argument, $routeName)
     {
-        parent::__construct(sprintf('Missing argument "%s" or argument "%s" is empty for route <b>%s</b>', $argument, $routeName));
+        parent::__construct(sprintf('Missing argument "%1$s" or argument "%1$s" is empty for route %2$s', $argument, $routeName));
     }
 }

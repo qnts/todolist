@@ -2,6 +2,7 @@
 
 namespace App\Core\Http;
 
+use App\Core\Routing\Route;
 use App\Core\Utilities\DotNotation;
 
 class Request
@@ -78,5 +79,13 @@ class Request
         }
         $value = $this->data->get($key);
         return is_null($value) ? $default : $value;
+    }
+
+    /**
+     * @return Route
+     */
+    public function currentRoute()
+    {
+        return resolve('router')->getCurrentRoute();
     }
 }

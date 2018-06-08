@@ -26,6 +26,11 @@ class Router
     private $lastRoute;
 
     /**
+     * @var Route
+     */
+    protected $currentRoute;
+
+    /**
      * Match an url with any methods
      * @param string $path
      * @param mixed $handler
@@ -94,6 +99,7 @@ class Router
          */
         foreach ($this->routes[$method] as $route) {
             if ($route->match($requestUri)) {
+                $this->currentRoute = $route;
                 return $route;
             }
         }
@@ -165,6 +171,11 @@ class Router
             return $this->namedRoutes[$name]->toUrl($args);
         }
         throw new UnknownRouteNameException($name);
+    }
+
+    public function getCurrentRoute()
+    {
+        return $this->currentRoute;
     }
 
     public static function getSchema()

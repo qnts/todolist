@@ -3,7 +3,10 @@
 namespace App\Controllers;
 
 use App\Core\Http\Controller;
+use App\Core\Http\Request;
 use App\Core\Http\Response;
+use App\Core\Session;
+use App\Core\Utilities\FunctionInjector;
 use App\Core\View;
 use App\Models\Todo;
 
@@ -37,11 +40,12 @@ class TodoController extends Controller
 
     /**
      * Display edit form
+     * @param Session $session
      * @param null|int $id
-     * @return \App\Core\Http\Response|View
+     * @return \App\Core\Http\Response
      * @throws \Exception
      */
-    public function edit($id = null)
+    public function edit(Session $session, $id = null)
     {
         $todo = Todo::find($id);
         if (!$todo) {
@@ -49,8 +53,8 @@ class TodoController extends Controller
         }
 
         // old input
-        if (session()->hasFlash('old')) {
-            $todo->fill(session()->flash('old'));
+        if ($session->hasFlash('old')) {
+            $todo->fill($session->flash('old'));
         }
 
         return view('edit', compact('todo'));
@@ -58,10 +62,11 @@ class TodoController extends Controller
 
     /**
      * Update a todo
+     * @param Request $request
      * @param null|int $id
      * @return \App\Core\Http\Response
      */
-    public function save($id = null)
+    public function save(Request $request, $id = null)
     {
         // get origin
         $todo = Todo::find($id);
@@ -71,49 +76,52 @@ class TodoController extends Controller
         // @TODO write a validation class
 
         // pure validating
-        $validation = $this->validate($id);
+        $validation = $this->validate($request, $id);
         if ($validation !== true) {
             return $validation;
         }
 
         // fill new data to model
-        $todo->fill(request()->input());
+        $todo->fill($request->input());
         $todo->save();
         // back
         return to_route('todo.edit', ['id' => $todo->id, '+query' => ['saved' => 1]]);
     }
 
     /**
-     * Create a todo
+     * Create a Todo
+     * @param Request $request
+     * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
         // @TODO validate
         // pure validating
-        $validation = $this->validate();
+        $validation = $this->validate($request);
         if ($validation !== true) {
             return $validation;
         }
         // save
-        $todo = new Todo(request()->input());
+        $todo = new Todo($request->input());
         $todo->save();
         return to_route('todo.edit', ['id' => $todo->id, '+query' => ['saved' => 1]]);
     }
 
     /**
      * Validate request
+     * @param Request $request
      * @param null|int $id Pass the id to redirect to edit page when errors occur, else go to create page
      * @return true|Response
      */
-    protected function validate($id = null)
+    protected function validate(Request $request, $id = null)
     {
-        $name = trim(request()->input('name'));
+        $name = trim($request->input('name'));
         $errors = [];
         if (empty($name)) {
             $errors[] = 'Name not blank';
         }
-        $start_date = \DateTime::createFromFormat('Y-m-d', trim(request()->input('start_date')));
-        $end_date = \DateTime::createFromFormat('Y-m-d', trim(request()->input('end_date')));
+        $start_date = \DateTime::createFromFormat('Y-m-d', trim($request->input('start_date')));
+        $end_date = \DateTime::createFromFormat('Y-m-d', trim($request->input('end_date')));
         if (!$start_date) {
             $errors[] = 'Invalid start date format';
         }
@@ -121,18 +129,20 @@ class TodoController extends Controller
             $errors[] = 'Invalid end date format';
         }
         if ($start_date && $end_date && $start_date > $end_date) {
-            $errors[] = 'Start date value cannot be after end date';
+            $errors[] = 'Start date cannot be after end date';
         }
+        // if has errors
         if (!empty($errors)) {
             session()->setFlash('errors', $errors);
             // save old input
-            session()->setFlash('old', request()->input());
+            session()->setFlash('old', $request->input());
             if ($id) {
                 return to_route('todo.edit', ['id' => $id]);
             } else {
-                return to_route('todo.edit');
+                return to_route('todo.create');
             }
         }
+        // else
         return true;
     }
 }

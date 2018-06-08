@@ -56,6 +56,7 @@ class Application
             'router' => Router::class,
             'config' => Config::getInstance(),
             'session' => Session::class,
+            'injector' => Utilities\FunctionInjector::class,
         ]);
 
         self::$instance = $this;
@@ -127,11 +128,12 @@ class Application
             response_404()->output();
         } else {
             // call direct function
+            $injector = resolve('injector');
             if (is_callable($route->getHandler())) {
-                $response = call_user_func_array($route->getHandler(), $route->getArgs());
+                $response = $injector->run($route->getHandler(), $route->getArgs());
             } else {
                 // call controller action
-                $response = Http\Controller::invoke($route);
+                $response = $injector->run(Http\Controller::class . '::invoke', compact('route'));
             }
             // output response
             if ($response instanceof Http\Response) {

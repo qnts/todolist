@@ -5,11 +5,11 @@ $router = resolve('router');
 $router->get('/', 'TodoController@index')->name('home');
 
 // create
-$router->get('/todo/create', function () {
+$router->get('/todo/create', function (\App\Core\Http\Request $request, \App\Core\Session $session) {
     $todo = new App\Models\Todo();
     // old input
-    if (session()->hasFlash('old')) {
-        $todo->fill(session()->flash('old'));
+    if ($session->hasFlash('old')) {
+        $todo->fill($session->flash('old'));
     }
     return view('edit', compact('todo'));
 })->name('todo.create');

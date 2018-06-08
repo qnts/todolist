@@ -9,6 +9,8 @@ class Container
      */
     protected $instances = [];
 
+    protected $classNames = [];
+
     /**
      * @var Container
      */
@@ -42,16 +44,20 @@ class Container
                 $instance = new $instance();
             }
             $this->instances[$name] = $instance;
+            $this->classNames[get_class($instance)] = $instance;
         }
     }
 
     /**
      * Retrieve the registered object
-     * @param $name
+     * @param string $nameOrClassName name of object or full class name
      * @return mixed
      */
-    public function resolve($name)
+    public function resolve($nameOrClassName)
     {
-        return $this->instances[$name];
+        if (strpos($nameOrClassName, '\\') !== false) {
+            return isset($this->classNames[$nameOrClassName]) ? $this->classNames[$nameOrClassName] : null;
+        }
+        return isset($this->instances[$nameOrClassName]) ? $this->instances[$nameOrClassName] : null;
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
 use App\Core\Application;
-use App\Core\Router;
 use App\Core\Http\Response;
 use App\Core\Http\ViewResponse;
 use App\Core\Utilities\Container;
