@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Core;
+namespace App\Core\Routing;
 
 class Router
 {
     /**
-     * @var array list of registered routes
+     * @var array list of Routes
      */
     public $routes = [
         'GET'    => [],
@@ -16,102 +16,89 @@ class Router
     ];
 
     /**
-     * @var array Predefined patterns for routing
+     * @var array list of named Routes
      */
-    public $patterns = [
-        'any'  => '.*',
-        'id'   => '[0-9]+',
-        'slug' => '[a-zA-Z0-9\-]+',
-        'name' => '[a-zA-Z]+',
-    ];
+    protected $namedRoutes = [];
 
     /**
-     * Named pattern regex
+     * @var Route
      */
-    const REGVAL = '#({.+?})#';
+    private $lastRoute;
 
     /**
      * Match an url with any methods
      * @param string $path
-     * @param callable $handler
+     * @param mixed $handler
+     * @return self
      */
     public function any($path, $handler)
     {
-        $this->addRoute('ANY', $path, $handler);
+        return $this->addRoute('ANY', $path, $handler);
     }
 
     /**
      * Register a get route
      * @param string $path
-     * @param callable $handler
+     * @param mixed $handler
+     * @return self
      */
     public function get($path, $handler)
     {
-        $this->addRoute('GET', $path, $handler);
+        return $this->addRoute('GET', $path, $handler);
     }
 
     /**
      * Register a post route
      * @param string $path
-     * @param callable $handler
+     * @param mixed $handler
+     * @return self
      */
     public function post($path, $handler)
     {
-        $this->addRoute('POST', $path, $handler);
+        return $this->addRoute('POST', $path, $handler);
     }
 
     /**
      * Register a put route
      * @param string $path
-     * @param callable $handler
+     * @param mixed $handler
+     * @return self
      */
     public function put($path, $handler)
     {
-        $this->addRoute('PUT', $path, $handler);
+        return $this->addRoute('PUT', $path, $handler);
     }
 
     /**
      * Register a delete route
      * @param string $path
-     * @param callable $handler
+     * @param mixed $handler
+     * @return self
      */
     public function delete($path, $handler)
     {
-        $this->addRoute('DELETE', $path, $handler);
+        return $this->addRoute('DELETE', $path, $handler);
     }
 
     /**
-     * Parse the request and determine which route will be used
-     * @return array|void
+     * Parse request and get the active route
+     * @return mixed return Route on success or null if no route matches the request
      */
     public function parse()
     {
-        $app = app();
-        $method = $app->request()->method;
+        $method = request()->method;
         $requestUri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
 
-        foreach ($this->routes[$method] as $resource) {
-            $args    = [];
-            $route   = key($resource);
-            $handler = reset($resource);
-            if (preg_match(self::REGVAL, $route)) {
-                list($args, $uri, $route) = $this->parseRegexRoute($requestUri, $route);
+        /**
+         * @var Route $route
+         */
+        foreach ($this->routes[$method] as $route) {
+            if ($route->match($requestUri)) {
+                return $route;
             }
-
-            if (!preg_match("#^$route$#", $requestUri)) {
-                unset($this->routes[$method]);
-                continue ;
-            }
-
-            if (is_string($handler) && strpos($handler, '@')) {
-                list($ctrl, $method) = explode('@', $handler);
-                return ['controller' => $ctrl, 'method' => $method, 'args' => $args];
-            }
-
-            return ['handler' => $handler, 'args' => $args];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -119,10 +106,77 @@ class Router
      * @param string $method
      * @param string $path
      * @param callable $handler
+     * @return self
      */
     protected function addRoute($method, $path, $handler)
     {
-        $this->routes[$method][] = [$path => $handler];
+        $this->lastRoute = new Route($path, $handler);
+        $this->routes[$method][] = $this->lastRoute;
+        return $this;
+    }
+
+    /**
+     * Name the last registered route
+     * @param $name
+     * @return $this
+     */
+    public function name($name)
+    {
+        $this->namedRoutes[$name] = $this->lastRoute;
+        return $this;
+    }
+
+    /**
+     * Generate url
+     * @param $url
+     * @param null|array $args
+     * @return string
+     * @throws \Exception
+     */
+    public function url($url, $args = null)
+    {
+        if (substr($url, 0, 1) === '/') {
+            // is application url
+            if (is_null($args)) {
+                return self::getSchema() . trim($url, '/');
+            } else {
+                $route = new Route($url, null);
+                return $route->toUrl($args);
+            }
+        } else {
+            // is external url
+            return $url;
+        }
+    }
+
+    /**
+     * Generate url for a named route
+     * @param $name
+     * @param array $args
+     * @return string
+     * @throws UnknownRouteNameException if no named routes found
+     */
+    public function route($name, $args = [])
+    {
+        if (isset($this->namedRoutes[$name])) {
+            /**
+             * @throws MissingArgumentException
+             */
+            return $this->namedRoutes[$name]->toUrl($args);
+        }
+        throw new UnknownRouteNameException($name);
+    }
+
+    public static function getSchema()
+    {
+        if (config('short_url')) {
+            return '/';
+        }
+        $protocol = isset($_SERVER['HTTPS']) ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'];
+        $paths = explode(basename($_SERVER['SCRIPT_NAME']), dirname($_SERVER['PHP_SELF']));
+        $path = trim($paths[0], '/\\');
+        return sprintf('%1$s://%2$s%3$s%4$s/', $protocol, $host, $path);
     }
 
 }
