@@ -31,10 +31,10 @@
             @endif
 
             @if ($todo->id)
-            <form action="{{ url('/todo/{:id}', ['id' => $todo->id]) }}" method="post">
+            <form action="{{ route('todo.save', ['id' => $todo->id]) }}" method="post">
                 <input type="hidden" name="_method" value="PUT">
             @else
-            <form action="{{ url('/todo/create') }}" method="post">
+            <form action="{{ route('todo.create') }}" method="post">
             @endif
                 <div class="form-group">
                     <label>Name</label>

@@ -11,6 +11,7 @@ class TodoController extends Controller
 {
     /**
      * Display homepage
+     * @throws \Exception
      */
     public function index()
     {
@@ -38,6 +39,7 @@ class TodoController extends Controller
      * Display edit form
      * @param null|int $id
      * @return \App\Core\Http\Response|View
+     * @throws \Exception
      */
     public function edit($id = null)
     {
@@ -78,7 +80,7 @@ class TodoController extends Controller
         $todo->fill(request()->input());
         $todo->save();
         // back
-        return redirect('/todo/{:id}/edit?saved=1', ['id' => $todo->id]);
+        return to_route('todo.edit', ['id' => $todo->id, '+query' => ['saved' => 1]]);
     }
 
     /**
@@ -95,7 +97,7 @@ class TodoController extends Controller
         // save
         $todo = new Todo(request()->input());
         $todo->save();
-        return redirect('/todo/{:id}/edit?saved=1', ['id' => $todo->id]);
+        return to_route('todo.edit', ['id' => $todo->id, '+query' => ['saved' => 1]]);
     }
 
     /**
@@ -126,9 +128,9 @@ class TodoController extends Controller
             // save old input
             session()->setFlash('old', request()->input());
             if ($id) {
-                return redirect('/todo/{:id}/edit', ['id' => $id]);
+                return to_route('todo.edit', ['id' => $id]);
             } else {
-                return redirect('/todo/create');
+                return to_route('todo.edit');
             }
         }
         return true;
