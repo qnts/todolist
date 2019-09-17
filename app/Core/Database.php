@@ -26,7 +26,7 @@ class Database
         try {
             $this->connection = new PDO(
                 sprintf(
-                    '%1$s:host=%2$s;dbname=%3$s;port=%2$s',
+                    '%1$s:host=%2$s;dbname=%3$s;port=%4$s',
                     $dbConfigs['type'],
                     $dbConfigs['host'],
                     $dbConfigs['db'],
