@@ -1,0 +1,124 @@
+* {
+    box-sizing: border-box;
+}
+html {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: sans-serif;
+    font-size: 16px/1rem;
+    line-height: 1.25;
+}
+a,
+a:hover,
+a:active,
+a:visited {
+    color: #08c;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+.row {
+    display: flex;
+    margin: 0 -15px 1rem;
+}
+.col {
+    padding: 0 15px;
+}
+
+.btn,
+.btn:active,
+.btn:visited,
+.btn:hover,
+.btn:focus {
+    padding: .5rem .75rem;
+    background: #f0f0f0;
+    border: 1px solid #bbb;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+.btn:hover {
+    background: #fff;
+}
+.btn:active,
+.btn:focus {
+    background: #eee;
+}
+.btn.primary {
+    border: 1px solid #08c;
+    background-color: #09c;
+    color: #fff;
+}
+.btn.primary:hover {
+    background-color: #09f;
+}
+.btn.primary:active,
+.btn.primary:focus {
+    background-color: #08c;
+}
+
+.panel {
+    margin-bottom: 1rem;
+}
+
+.container {
+    margin: 0 auto;
+    max-width: 1280px;
+}
+
+.actions {
+    text-align: right;
+    margin-bottom: .35rem;
+    font-size: 80%;
+}
+.actions a {
+    padding: .15rem .25rem;
+    background: #fff;
+    border-radius: 3px;
+    margin-left: 3px;
+}
+
+.fc-event, .fc-event-dot {
+    font-size: 1rem;
+}
+/* planning */
+.fc-event.status-planning {
+    background-color: #a88a08;
+    border-color: #7a6406;
+}
+/* done */
+.fc-event.status-done {
+    background-color: #249957;
+    border-color: #19703f;
+}
+
+.delete {
+    color: #e2517a !important;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: .25rem;
+}
+input,
+select,
+textarea {
+    min-width: 25rem;
+    background: #fff;
+    border: 1px solid #bbb;
+    font-size: 1rem;
+    padding: .5rem;
+}
+.msg.msg-error {
+    color: #e2517a;
+}
+.msg.msg-success {
+    color: #249957;
+}
